@@ -221,12 +221,22 @@ async function run() {
     const _search = [
       "search",
       "autonity",
-    ];    
+    ];
+    const _fetch = [
+      "fetch",
+      chart,
+      "--repo",
+      repository,
+    ];
+
     if (dryRun) args.push("--dry-run");
     if (appName) args.push(`--set=app.name=${appName}`);
    // if (version) args.push(`--set=app.version=${version}`);
-    if (version) args.push(`--version=${version}`); 
+    if (version) args.push(`--version=${version}`);
     if (timeout) args.push(`--timeout=${timeout}`);
+    if (repository) args.push('--repo=https://charts-ose.clearmatics.com');
+    args.push('--debug');
+    args.push('--home=/root/.helm/')
     valueFiles.forEach(f => args.push(`--values=${f}`));
     args.push("--values=./values.yml");
 
@@ -268,19 +278,8 @@ async function run() {
         ignoreReturnCode: true
       });
     } else {
-        if (repository) {
-          core.debug(`Helm init start`)
-          await exec.exec(helm, _init);
-          core.debug(`Helm init end`)
-          await exec.exec(helm, _add);
-          core.debug(`print after helm repo add end`)
-          await exec.exec(helm, _repo_list);
-          await exec.exec(helm, _update);
-          await exec.exec(helm, _version, opts);
-          await exec.exec(helm, _search);
-          await exec.exec(helm, args, opts);
-        }
-     // await exec.exec(helm, args, opts);
+      core.debug(`helm home is ${process.env.HELM_HOME}`)
+      await exec.exec(helm, args, opts);
     }
 
     await status(task === "remove" ? "inactive" : "success");
