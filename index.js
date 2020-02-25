@@ -192,8 +192,8 @@ async function run() {
       release,
       chart,
       "--install",
-      "--wait",
-     // "--atomic",
+     // "--wait",
+    //  "--atomic",
       `--namespace=${namespace}`,
     ];
         //raj to add args for hellm repo add
